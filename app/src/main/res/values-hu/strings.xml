@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Fények</string>
+    <string name="status">Állapot</string>
+    <string name="searching">Keresés..</string>
+    <string name="available">Elérhető</string>
+    <string name="unavailable">Nem Elérhető</string>
+    <string name="off">Kikapcsolva</string>
+    <string name="color">Világít</string>
+    <string name="fade">Áttűnés</string>
+    <string name="turnOff">Kikapcsolás</string>
+    <string name="fullBrightness">Teljes Fényerő</string>
+    <string name="chooseColor">Szín választás</string>
+    <string name="fadeSettings">Áttűnés Beállítása</string>
+    <string name="sleepTimer">Időzített Altatás</string>
+</resources>

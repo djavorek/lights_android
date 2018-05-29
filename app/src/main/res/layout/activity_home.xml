@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/colorPrimary"
+    android:orientation="vertical"
+    android:padding="3dp">
+
+    <fragment
+        android:id="@+id/statusFragment"
+        android:name="doublevv.lights.activities.StatusFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:layout="@layout/fragment_status" />
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="2pt">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/offButton"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:theme="@style/button"
+                android:text="@string/turnOff" />
+
+            <Button
+                android:id="@+id/fullBrightnessButton"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:theme="@style/button"
+                android:text="@string/fullBrightness"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="55dp">
+
+            <Button
+                android:id="@+id/colorButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:theme="@style/button"
+                android:text="@string/chooseColor" />
+
+            <Button
+                android:id="@+id/fadeButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:theme="@style/button"
+                android:text="@string/fadeSettings"/>
+
+            <Button
+                android:id="@+id/sleepButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:theme="@style/button"
+                android:text="@string/sleepTimer"/>
+
+        </TableRow>
+    </TableLayout>
+</LinearLayout>

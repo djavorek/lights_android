@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Lights</string>
+    <string name="status">Status</string>
+    <string name="searching">Seaching..</string>
+    <string name="available">Available</string>
+    <string name="unavailable">Unavailable</string>
+    <string name="off">Turned Off</string>
+    <string name="color">Turned On</string>
+    <string name="fade">Fading</string>
+    <string name="turnOff">Turn Off</string>
+    <string name="fullBrightness">Full Brightness</string>
+    <string name="chooseColor">Choose Color</string>
+    <string name="fadeSettings">Fade Settings</string>
+    <string name="sleepTimer">Sleep Timer</string>
+</resources>
