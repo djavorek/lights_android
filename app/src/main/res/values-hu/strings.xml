@@ -8,7 +8,7 @@
     <string name="color">Világít</string>
     <string name="fade">Áttűnés</string>
     <string name="turnOff">Kikapcsolás</string>
-    <string name="fullBrightness">Teljes Fényerő</string>
+    <string name="on">Bekapcsolás</string>
     <string name="chooseColor">Szín választás</string>
     <string name="fadeSettings">Áttűnés Beállítása</string>
     <string name="sleepTimer">Időzített Altatás</string>

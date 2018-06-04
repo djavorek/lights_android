@@ -71,7 +71,10 @@ public class LedController {
                 }
             };
 
-            new UdpClientThread(this.getUdpAddress(), message, new UdpClientHandler(operator)).start();
+            if(UdpClientThread.isReady)
+            {
+                new UdpClientThread(this.getUdpAddress(), message, new UdpClientHandler(operator)).start();
+            }
         }
     }
 

@@ -12,6 +12,8 @@ import java.net.UnknownHostException;
 
 public class UdpClientThread extends Thread{
 
+    public static boolean isReady = true;
+
     private String destinationIP;
     private String message;
     private UdpClientHandler handler;
@@ -33,6 +35,8 @@ public class UdpClientThread extends Thread{
 
     @Override
     public void run() {
+        isReady = false;
+
         DatagramSocket socket = null;
         byte[] buffer = new byte[256];
         String responseStatus = null;
@@ -76,6 +80,7 @@ public class UdpClientThread extends Thread{
                 socket.close();
             }
             handler.sendEmptyMessage(handler.DONE);
+            isReady = true;
         }
     }
 }

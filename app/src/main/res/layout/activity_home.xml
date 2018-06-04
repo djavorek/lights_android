@@ -31,11 +31,11 @@
                 android:text="@string/turnOff" />
 
             <Button
-                android:id="@+id/fullBrightnessButton"
+                android:id="@+id/onButton"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:theme="@style/button"
-                android:text="@string/fullBrightness"/>
+                android:text="@string/on"/>
         </TableRow>
 
         <TableRow
@@ -65,7 +65,21 @@
                 android:layout_weight="1"
                 android:theme="@style/button"
                 android:text="@string/sleepTimer"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="5pt">
+
+            <fragment
+                android:id="@+id/functionFragment"
+                android:name="doublevv.lights.activities.ColorFragment"
+                tools:layout="@layout/fragment_color"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
 
         </TableRow>
     </TableLayout>
+
 </LinearLayout>

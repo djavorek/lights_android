@@ -8,8 +8,11 @@
     <string name="color">Turned On</string>
     <string name="fade">Fading</string>
     <string name="turnOff">Turn Off</string>
-    <string name="fullBrightness">Full Brightness</string>
+    <string name="on">Turn On</string>
     <string name="chooseColor">Choose Color</string>
     <string name="fadeSettings">Fade Settings</string>
     <string name="sleepTimer">Sleep Timer</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
