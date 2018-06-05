@@ -30,6 +30,11 @@ public class UdpClientHandler extends Handler {
             default:
                 super.handleMessage(msg);
         }
+    }
 
+    public interface UdpOperator {
+        public void noResponse();
+        public void update(ResponseMessage message);
+        public void done();
     }
 }

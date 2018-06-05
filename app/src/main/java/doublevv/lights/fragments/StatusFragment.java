@@ -1,5 +1,6 @@
-package doublevv.lights.activities;
+package doublevv.lights.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.os.CountDownTimer;
@@ -13,11 +14,11 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import doublevv.lights.R;
-import doublevv.lights.activities.interfaces.LedInfoView;
 import doublevv.lights.controllers.LedController;
 import doublevv.lights.controllers.Status;
 
-public class StatusFragment extends Fragment implements LedInfoView {
+public class StatusFragment extends Fragment implements LedController.LedInfoView {
+    private StatusChangeListener listener;
 
     @BindView(R.id.statusProgressbar)
     ProgressBar statusBar;
@@ -34,13 +35,29 @@ public class StatusFragment extends Fragment implements LedInfoView {
     public StatusFragment() {
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_status, container, false);
         ButterKnife.bind(this, view);
         return view;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof StatusFragment.StatusChangeListener) {
+            listener = (StatusFragment.StatusChangeListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnColorChangeListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
     }
 
     public void refreshStatus() {
@@ -55,21 +72,25 @@ public class StatusFragment extends Fragment implements LedInfoView {
             case UNAVAILABLE: {
                 status.setText(getResources().getString(R.string.unavailable));
                 task.setText("");
+                listener.onUnavailable();
                 break;
             }
             case OFF: {
                 status.setText(getResources().getString(R.string.available));
                 task.setText(getResources().getString(R.string.off));
+                listener.onOff();
                 break;
             }
             case COLOR: {
                 status.setText(getResources().getString(R.string.available));
                 task.setText(getResources().getString(R.string.color));
+                listener.onColor();
                 break;
             }
             case FADE: {
                 status.setText(getResources().getString(R.string.available));
                 task.setText(getResources().getString(R.string.fade));
+                listener.onFade();
                 break;
             }
         }
@@ -102,5 +123,12 @@ public class StatusFragment extends Fragment implements LedInfoView {
             }
         };
         statusTimer.start();
+    }
+
+    public interface StatusChangeListener {
+        void onUnavailable();
+        void onOff();
+        void onColor();
+        void onFade();
     }
 }

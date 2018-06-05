@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.ColorFragment">
+    tools:context=".fragments.UnavailableFragment">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -13,11 +12,11 @@
         android:background="@drawable/status_view_background"
         android:padding="10dp">
 
-        <ImageView
-            android:id="@+id/colorView"
+        <TextView
+            android:id="@+id/textView"
             android:layout_width="wrap_content"
-            android:layout_height="250dp"
-            android:src="@drawable/colors" />
+            android:layout_height="wrap_content"
+            android:text="TODO: Connection Tips" />
 
     </LinearLayout>
 </FrameLayout>

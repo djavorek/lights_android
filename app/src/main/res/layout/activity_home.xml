@@ -9,7 +9,7 @@
 
     <fragment
         android:id="@+id/statusFragment"
-        android:name="doublevv.lights.activities.StatusFragment"
+        android:name="doublevv.lights.fragments.StatusFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:layout="@layout/fragment_status" />
@@ -69,13 +69,12 @@
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="5pt">
+            android:layout_height="match_parent">
 
             <fragment
                 android:id="@+id/functionFragment"
-                android:name="doublevv.lights.activities.ColorFragment"
-                tools:layout="@layout/fragment_color"
+                android:name="doublevv.lights.fragments.SearchFragment"
+                tools:layout="@layout/fragment_unavailable"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"/>
 

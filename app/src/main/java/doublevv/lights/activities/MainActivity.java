@@ -1,5 +1,6 @@
 package doublevv.lights.activities;
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -15,9 +16,12 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import doublevv.lights.R;
 import doublevv.lights.controllers.LedController;
+import doublevv.lights.controllers.Status;
+import doublevv.lights.fragments.ColorFragment;
+import doublevv.lights.fragments.StatusFragment;
 
 
-public class MainActivity extends AppCompatActivity implements ColorFragment.OnColorChangeListener {
+public class MainActivity extends AppCompatActivity implements ColorFragment.OnColorChangeListener, StatusFragment.StatusChangeListener {
 
     LedController ledController = LedController.getInstance();
 
@@ -73,11 +77,9 @@ public class MainActivity extends AppCompatActivity implements ColorFragment.OnC
 
     @OnClick({R.id.colorButton, R.id.fadeButton, R.id.sleepButton})
     public void normalFunctionSelect(View button) {
-        Fragment FunctionFragment = null;
-
         switch(button.getId()) {
             case R.id.colorButton: {
-                FunctionFragment = ColorFragment.newInstance(ledController.getColor());
+                replaceFunctionFragment(ColorFragment.newInstance(), "color");
                 break;
             }
             case R.id.fadeButton: {
@@ -87,10 +89,6 @@ public class MainActivity extends AppCompatActivity implements ColorFragment.OnC
                 break;
             }
         }
-
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.functionFragment, FunctionFragment);
     }
 
 
@@ -102,5 +100,33 @@ public class MainActivity extends AppCompatActivity implements ColorFragment.OnC
         String colorString = String.valueOf(red) + ":" + String.valueOf(green) + ":" + String.valueOf(blue);
 
         ledController.sendCommand(colorString, statusFragment);
+    }
+
+    @Override
+    public void onUnavailable() {
+
+    }
+
+    @Override
+    public void onOff() {
+
+    }
+
+    @Override
+    public void onColor() {
+
+    }
+
+    @Override
+    public void onFade() {
+
+    }
+
+    public void replaceFunctionFragment(Fragment fragment, String tag){
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(R.animator.enter_from_left, R.animator.exit_to_right, R.animator.enter_from_right, R.animator.exit_to_left);
+        transaction.replace(R.id.functionFragment, fragment);
+        transaction.addToBackStack(tag);
+        transaction.commit();
     }
 }

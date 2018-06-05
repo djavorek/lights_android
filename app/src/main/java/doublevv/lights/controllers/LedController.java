@@ -1,10 +1,8 @@
 package doublevv.lights.controllers;
 
-import doublevv.lights.activities.interfaces.LedInfoView;
 import doublevv.lights.udp.ResponseMessage;
 import doublevv.lights.udp.UdpClientHandler;
 import doublevv.lights.udp.UdpClientThread;
-import doublevv.lights.udp.UdpOperator;
 
 public class LedController {
     private static final LedController instance = new LedController();
@@ -28,7 +26,7 @@ public class LedController {
     }
 
     public void refreshDeviceInfo(final LedInfoView infoGui) {
-        UdpOperator operator = new UdpOperator() {
+        UdpClientHandler.UdpOperator operator = new UdpClientHandler.UdpOperator() {
             @Override
             public void noResponse() {
                 LedController.this.setUdpAddress(BROADCAST_IP);
@@ -52,7 +50,7 @@ public class LedController {
 
     public void sendCommand(String message, final LedInfoView infoGui) {
         if(message != null) {
-            UdpOperator operator = new UdpOperator() {
+            UdpClientHandler.UdpOperator operator = new UdpClientHandler.UdpOperator() {
                 @Override
                 public void noResponse() {
                     LedController.this.setUdpAddress(BROADCAST_IP);
@@ -122,5 +120,9 @@ public class LedController {
 
     private void setColor(String color) {
         this.color = color;
+    }
+
+    public interface LedInfoView {
+        public void refreshLedFeedbackInfo();
     }
 }

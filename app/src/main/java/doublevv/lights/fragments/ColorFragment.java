@@ -1,4 +1,4 @@
-package doublevv.lights.activities;
+package doublevv.lights.fragments;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -15,18 +15,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import doublevv.lights.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link OnColorChangeListener} interface
- * to handle interaction events.
- * Use the {@link ColorFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class ColorFragment extends Fragment {
-    private static final String colorToInitializeWith = "255:255:255";
 
-    private String actualColor;
+public class ColorFragment extends Fragment {
     private OnColorChangeListener listener;
 
     @BindView(R.id.colorView)
@@ -36,27 +26,15 @@ public class ColorFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param initColor Initializing color.
-     * @return A new instance of fragment ColorFragment.
-     */
-    public static ColorFragment newInstance(String initColor) {
+
+    public static ColorFragment newInstance() {
         ColorFragment fragment = new ColorFragment();
-        Bundle args = new Bundle();
-        args.putString(colorToInitializeWith, initColor);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            actualColor = getArguments().getString(colorToInitializeWith);
-        }
     }
 
     @Override
@@ -104,6 +82,4 @@ public class ColorFragment extends Fragment {
     public interface OnColorChangeListener {
         void onColorChange(@ColorInt int color);
     }
-
-
 }
