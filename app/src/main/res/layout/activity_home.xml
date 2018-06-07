@@ -5,11 +5,12 @@
     android:layout_height="fill_parent"
     android:background="@color/colorPrimary"
     android:orientation="vertical"
-    android:padding="3dp">
+    android:padding="8dp">
 
     <fragment
         android:id="@+id/statusFragment"
         android:name="doublevv.lights.fragments.StatusFragment"
+        android:elevation="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:layout="@layout/fragment_status" />
@@ -67,18 +68,15 @@
                 android:text="@string/sleepTimer"/>
         </TableRow>
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
 
             <fragment
                 android:id="@+id/functionFragment"
-                android:name="doublevv.lights.fragments.SearchFragment"
-                tools:layout="@layout/fragment_unavailable"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"/>
+                android:name="doublevv.lights.fragments.IdleFragment"
+                tools:layout="@layout/fragment_color"
+                android:elevation="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
-        </TableRow>
     </TableLayout>
 
 </LinearLayout>

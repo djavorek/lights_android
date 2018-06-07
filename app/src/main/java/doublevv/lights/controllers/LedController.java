@@ -25,7 +25,7 @@ public class LedController {
         return instance;
     }
 
-    public void refreshDeviceInfo(final LedInfoView infoGui) {
+    public void refreshDeviceStatus(final LedInfoView infoGui) {
         UdpClientHandler.UdpOperator operator = new UdpClientHandler.UdpOperator() {
             @Override
             public void noResponse() {

@@ -53,22 +53,18 @@ public class UdpClientThread extends Thread{
                 packet = new DatagramPacket(buffer, buffer.length);
                 socket.setSoTimeout(2000);
                 socket.receive(packet);
+                responseStatus = new String(packet.getData(), 0, packet.getLength());
+
+                ResponseMessage responseMessage = new ResponseMessage(packet.getAddress().getHostAddress(), responseStatus);
+                handler.sendMessage(
+                        Message.obtain(handler, handler.UPDATE, responseMessage));
             }
             catch (SocketTimeoutException e) {
-                    handler.sendEmptyMessage(handler.NO_RESPONSE);
-            }
-
-            try {
-            responseStatus = new String(packet.getData(), 0, packet.getLength());
-
-            ResponseMessage responseMessage = new ResponseMessage(packet.getAddress().getHostAddress(), responseStatus);
-            handler.sendMessage(
-                    Message.obtain(handler, handler.UPDATE, responseMessage));
+                handler.sendEmptyMessage(handler.NO_RESPONSE);
             }
             catch (NullPointerException e) {
                 System.err.println("Response received, but was null.. (no way)");
             }
-
         } catch (SocketException e) {
             e.printStackTrace();
         } catch (UnknownHostException e) {

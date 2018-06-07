@@ -1,9 +1,12 @@
 package doublevv.lights.fragments;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.support.annotation.ColorInt;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +21,16 @@ import doublevv.lights.controllers.LedController;
 import doublevv.lights.controllers.Status;
 
 public class StatusFragment extends Fragment implements LedController.LedInfoView {
-    private StatusChangeListener listener;
+    private static int retriesBeforeFail = 2;
+
+    private LedController ledController = LedController.getInstance();
+    private StatusChangeListener statusChangeListener;
+    private CountDownTimer initializationTimer;
+    private Handler pollingHandler = new Handler();
+    private Integer failedConnectionCount = 0;
 
     @BindView(R.id.statusProgressbar)
-    ProgressBar statusBar;
+    ProgressBar initializationBar;
 
     @BindView(R.id.status)
     TextView status;
@@ -29,25 +38,17 @@ public class StatusFragment extends Fragment implements LedController.LedInfoVie
     @BindView(R.id.task)
     TextView task;
 
-    LedController ledController = LedController.getInstance();
-    CountDownTimer statusTimer;
+    @BindView(R.id.task_color)
+    View taskColor;
 
     public StatusFragment() {
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        View view = inflater.inflate(R.layout.fragment_status, container, false);
-        ButterKnife.bind(this, view);
-        return view;
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof StatusFragment.StatusChangeListener) {
-            listener = (StatusFragment.StatusChangeListener) context;
+            statusChangeListener = (StatusFragment.StatusChangeListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnColorChangeListener");
@@ -55,74 +56,129 @@ public class StatusFragment extends Fragment implements LedController.LedInfoVie
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        listener = null;
-    }
-
-    public void refreshStatus() {
-        startStatusTimer();
-        ledController.refreshDeviceInfo(this);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_status, container, false);
+        ButterKnife.bind(this, view);
+        return view;
     }
 
     @Override
-    public void refreshLedFeedbackInfo() {
+    public void onStart() {
+        super.onStart();
+        initializeStatus();
+    }
 
-        switch (ledController.getStatus()) {
+    @Override
+    public void onStop() {
+        super.onStop();
+        pollingHandler.removeCallbacks(refreshStatus);
+        initializationTimer.cancel();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        statusChangeListener = null;
+    }
+
+    public void initializeStatus() {
+        startInitializationTimer();
+        ledController.refreshDeviceStatus(this);
+    }
+
+    private Runnable refreshStatus = new Runnable() {
+        @Override
+        public void run() {
+            ledController.refreshDeviceStatus(StatusFragment.this);
+            pollingHandler.postDelayed(this, 5000);
+        }
+    };
+
+    //When refreshDeviceStatus finished
+    @Override
+    public void refreshLedFeedbackInfo() {
+        Status currentStatus = ledController.getStatus();
+
+        switch (currentStatus) {
             case UNAVAILABLE: {
-                status.setText(getResources().getString(R.string.unavailable));
-                task.setText("");
-                listener.onUnavailable();
+                failedConnectionCount++;
+
+                if(failedConnectionCount >= retriesBeforeFail) {
+                    task.setText("");
+                    statusChangeListener.onUnavailable();
+                    status.setText(getResources().getString(R.string.unavailable));
+                }
                 break;
             }
             case OFF: {
-                status.setText(getResources().getString(R.string.available));
                 task.setText(getResources().getString(R.string.off));
-                listener.onOff();
+                statusChangeListener.onOff();
                 break;
             }
             case COLOR: {
-                status.setText(getResources().getString(R.string.available));
                 task.setText(getResources().getString(R.string.color));
-                listener.onColor();
+                statusChangeListener.onColor();
+                setTaskColor(ledController.getColor());
                 break;
             }
             case FADE: {
-                status.setText(getResources().getString(R.string.available));
                 task.setText(getResources().getString(R.string.fade));
-                listener.onFade();
+                statusChangeListener.onFade();
                 break;
             }
         }
 
-        if(ledController.getStatus() != Status.UNAVAILABLE)
+        if(currentStatus != Status.UNAVAILABLE)
         {
-            statusTimer.onFinish();
+            failedConnectionCount = 0;
+            status.setText(getResources().getString(R.string.available));
+            initializationBar.setVisibility(View.INVISIBLE);
+        }
+
+        if((currentStatus != Status.COLOR && currentStatus != Status.UNAVAILABLE || (currentStatus == Status.UNAVAILABLE && failedConnectionCount >= retriesBeforeFail)))
+        {
+            resetTaskColor();
         }
     }
 
-    private void startStatusTimer()
+    private void setTaskColor(String color) {
+        String[] colorComponents = color.split(":");
+        int red = Integer.valueOf(colorComponents[0]);
+        int green = Integer.valueOf(colorComponents[1]);
+        int blue = Integer.valueOf(colorComponents[2]);
+
+        int background = Color.rgb(red, green, blue);
+        taskColor.setBackgroundColor(background);
+        taskColor.setVisibility(View.VISIBLE);
+
+    }
+
+    private void resetTaskColor() {
+        taskColor.setVisibility(View.GONE);
+    }
+
+    private void startInitializationTimer()
     {
-        statusTimer = new CountDownTimer(2100, 200) {
+        initializationTimer = new CountDownTimer(2100, 30) {
             @Override
             public void onTick(long millisUntilFinished) {
                 int progress = (int) ((2100 - millisUntilFinished) / 20);
-                statusBar.setProgress(progress);
+                initializationBar.setProgress(progress);
             }
 
             @Override
             public void onFinish() {
-                if(ledController.getUdpAddress() == LedController.BROADCAST_IP)
+                if(ledController.getStatus() == Status.UNAVAILABLE)
                 {
-                    refreshStatus();
+                    this.start();
+                    ledController.refreshDeviceStatus(StatusFragment.this);
                 }
                 else {
-                    statusBar.setVisibility(View.INVISIBLE);
-                    statusTimer.cancel();
+                    pollingHandler.postDelayed(refreshStatus, 4000);
                 }
             }
         };
-        statusTimer.start();
+        initializationTimer.start();
     }
 
     public interface StatusChangeListener {

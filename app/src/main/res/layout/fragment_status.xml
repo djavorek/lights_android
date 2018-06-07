@@ -8,8 +8,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/status_view_background"
-        android:elevation="10dp"
+        android:background="@drawable/fragments_background"
         android:orientation="horizontal"
         android:padding="10dp">
 
@@ -28,12 +27,26 @@
             android:scaleX="2"
             android:scaleY="2"
             android:src="@mipmap/ic_launcher_foreground" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
         <TextView
             android:id="@+id/task"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
             android:textSize="20sp"/>
+        <View
+            android:id="@+id/task_color"
+            android:layout_marginLeft="5dp"
+            android:layout_gravity="center"
+            android:layout_width="18sp"
+            android:layout_height="18sp"
+            android:background="@color/colorAccent"
+            android:visibility="gone"/>
+        </LinearLayout>
 
     </LinearLayout>
 
