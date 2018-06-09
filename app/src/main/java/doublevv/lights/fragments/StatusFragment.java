@@ -3,10 +3,9 @@ package doublevv.lights.fragments;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.os.CountDownTimer;
 import android.os.Handler;
-import android.support.annotation.ColorInt;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,17 +16,14 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import doublevv.lights.R;
-import doublevv.lights.controllers.LedController;
-import doublevv.lights.controllers.Status;
+import doublevv.lights.services.udp.DeviceService;
+import doublevv.lights.services.udp.DeviceService.Status;
 
-public class StatusFragment extends Fragment implements LedController.LedInfoView {
-    private static int retriesBeforeFail = 2;
-
-    private LedController ledController = LedController.getInstance();
+public class StatusFragment extends Fragment implements DeviceService.LedInfoView {
+    private DeviceService deviceService = DeviceService.getInstance();
     private StatusChangeListener statusChangeListener;
     private CountDownTimer initializationTimer;
     private Handler pollingHandler = new Handler();
-    private Integer failedConnectionCount = 0;
 
     @BindView(R.id.statusProgressbar)
     ProgressBar initializationBar;
@@ -83,13 +79,13 @@ public class StatusFragment extends Fragment implements LedController.LedInfoVie
 
     public void initializeStatus() {
         startInitializationTimer();
-        ledController.refreshDeviceStatus(this);
+        deviceService.refreshDeviceStatus(this);
     }
 
     private Runnable refreshStatus = new Runnable() {
         @Override
         public void run() {
-            ledController.refreshDeviceStatus(StatusFragment.this);
+            deviceService.refreshDeviceStatus(StatusFragment.this);
             pollingHandler.postDelayed(this, 5000);
         }
     };
@@ -97,17 +93,13 @@ public class StatusFragment extends Fragment implements LedController.LedInfoVie
     //When refreshDeviceStatus finished
     @Override
     public void refreshLedFeedbackInfo() {
-        Status currentStatus = ledController.getStatus();
+        Status currentStatus = deviceService.getStatus();
 
         switch (currentStatus) {
             case UNAVAILABLE: {
-                failedConnectionCount++;
-
-                if(failedConnectionCount >= retriesBeforeFail) {
-                    task.setText("");
-                    statusChangeListener.onUnavailable();
-                    status.setText(getResources().getString(R.string.unavailable));
-                }
+                task.setText("");
+                statusChangeListener.onUnavailable();
+                status.setText(getResources().getString(R.string.unavailable));
                 break;
             }
             case OFF: {
@@ -118,7 +110,7 @@ public class StatusFragment extends Fragment implements LedController.LedInfoVie
             case COLOR: {
                 task.setText(getResources().getString(R.string.color));
                 statusChangeListener.onColor();
-                setTaskColor(ledController.getColor());
+                setTaskColor(deviceService.getColor());
                 break;
             }
             case FADE: {
@@ -130,12 +122,11 @@ public class StatusFragment extends Fragment implements LedController.LedInfoVie
 
         if(currentStatus != Status.UNAVAILABLE)
         {
-            failedConnectionCount = 0;
             status.setText(getResources().getString(R.string.available));
             initializationBar.setVisibility(View.INVISIBLE);
         }
 
-        if((currentStatus != Status.COLOR && currentStatus != Status.UNAVAILABLE || (currentStatus == Status.UNAVAILABLE && failedConnectionCount >= retriesBeforeFail)))
+        if(currentStatus != Status.COLOR)
         {
             resetTaskColor();
         }
@@ -168,10 +159,10 @@ public class StatusFragment extends Fragment implements LedController.LedInfoVie
 
             @Override
             public void onFinish() {
-                if(ledController.getStatus() == Status.UNAVAILABLE)
+                if(deviceService.getStatus() == Status.UNAVAILABLE)
                 {
                     this.start();
-                    ledController.refreshDeviceStatus(StatusFragment.this);
+                    deviceService.refreshDeviceStatus(StatusFragment.this);
                 }
                 else {
                     pollingHandler.postDelayed(refreshStatus, 4000);

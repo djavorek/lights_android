@@ -1,4 +1,4 @@
-package doublevv.lights.udp;
+package doublevv.lights.services.udp;
 
 public class ResponseMessage {
     private String ip;

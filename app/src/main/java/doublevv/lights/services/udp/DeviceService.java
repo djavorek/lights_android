@@ -1,11 +1,14 @@
-package doublevv.lights.controllers;
+package doublevv.lights.services.udp;
 
-import doublevv.lights.udp.ResponseMessage;
-import doublevv.lights.udp.UdpClientHandler;
-import doublevv.lights.udp.UdpClientThread;
+public class DeviceService {
+    private static final DeviceService instance = new DeviceService();
+    private static int retriesBeforeUnavailable = 2;
 
-public class LedController {
-    private static final LedController instance = new LedController();
+    private int failedResponses = 0;
+
+    public enum Status {
+        UNAVAILABLE, OFF, COLOR, FADE;
+    }
 
     public static final String BROADCAST_IP = "255.255.255.255";
 
@@ -19,28 +22,35 @@ public class LedController {
         status = Status.UNAVAILABLE;
     }
 
-    private LedController(){}
+    private DeviceService(){}
 
-    public static LedController getInstance() {
+    public static DeviceService getInstance() {
         return instance;
     }
 
     public void refreshDeviceStatus(final LedInfoView infoGui) {
         UdpClientHandler.UdpOperator operator = new UdpClientHandler.UdpOperator() {
+
             @Override
             public void noResponse() {
-                LedController.this.setUdpAddress(BROADCAST_IP);
-                status = Status.UNAVAILABLE;
+                failedResponses++;
+                DeviceService.this.setUdpAddress(BROADCAST_IP);
             }
 
             @Override
             public void update(ResponseMessage message) {
+                failedResponses = 0;
                 setUdpAddress(message.getIp());
                 parseStatus(message.getStatus());
             }
 
             @Override
             public void done() {
+                if(failedResponses >= retriesBeforeUnavailable)
+                {
+                    status = Status.UNAVAILABLE;
+                }
+
                 infoGui.refreshLedFeedbackInfo();
             }
         };
@@ -53,7 +63,7 @@ public class LedController {
             UdpClientHandler.UdpOperator operator = new UdpClientHandler.UdpOperator() {
                 @Override
                 public void noResponse() {
-                    LedController.this.setUdpAddress(BROADCAST_IP);
+                    DeviceService.this.setUdpAddress(BROADCAST_IP);
                     status = Status.UNAVAILABLE;
                 }
 

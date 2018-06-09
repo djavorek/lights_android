@@ -42,8 +42,8 @@
             android:id="@+id/task_color"
             android:layout_marginLeft="5dp"
             android:layout_gravity="center"
-            android:layout_width="18sp"
-            android:layout_height="18sp"
+            android:layout_width="17sp"
+            android:layout_height="17sp"
             android:background="@color/colorAccent"
             android:visibility="gone"/>
         </LinearLayout>

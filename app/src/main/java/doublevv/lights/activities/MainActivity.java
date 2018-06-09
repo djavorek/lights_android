@@ -1,7 +1,7 @@
 package doublevv.lights.activities;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
@@ -13,7 +13,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import doublevv.lights.R;
-import doublevv.lights.controllers.LedController;
+import doublevv.lights.services.udp.DeviceService;
 import doublevv.lights.fragments.ColorFragment;
 import doublevv.lights.fragments.FunctionFragment;
 import doublevv.lights.fragments.IdleFragment;
@@ -22,7 +22,7 @@ import doublevv.lights.fragments.UnavailableFragment;
 
 
 public class MainActivity extends AppCompatActivity implements ColorFragment.OnColorChangeListener, StatusFragment.StatusChangeListener {
-    LedController ledController = LedController.getInstance();
+    DeviceService deviceService = DeviceService.getInstance();
     FunctionFragment function;
 
     StatusFragment statusFragment;
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements ColorFragment.OnC
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
 
-        statusFragment = (StatusFragment)getFragmentManager().findFragmentById(R.id.statusFragment);
+        statusFragment = (StatusFragment)getSupportFragmentManager().findFragmentById(R.id.statusFragment);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements ColorFragment.OnC
         }
 
         replaceFunctionFragment(function);
-        ledController.sendCommand(command, statusFragment);
+        deviceService.sendCommand(command, statusFragment);
     }
 
     @OnClick({R.id.colorButton, R.id.fadeButton, R.id.sleepButton})
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements ColorFragment.OnC
         int blue = Color.blue(color);
         String colorString = String.valueOf(red) + ":" + String.valueOf(green) + ":" + String.valueOf(blue);
 
-        ledController.sendCommand(colorString, statusFragment);
+        deviceService.sendCommand(colorString, statusFragment);
     }
 
     @Override
@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements ColorFragment.OnC
     }
 
     public void replaceFunctionFragment(FunctionFragment functionFragment){
-        FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment requestedFragment = fragmentManager.findFragmentByTag(functionFragment.getTag());
 
         if(requestedFragment == null)
