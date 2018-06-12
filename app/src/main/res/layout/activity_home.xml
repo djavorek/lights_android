@@ -68,14 +68,20 @@
                 android:text="@string/sleepTimer"/>
         </TableRow>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@drawable/fragments_background"
+            android:padding="10dp">
 
-            <fragment
+            <FrameLayout
                 android:id="@+id/functionFragment"
-                android:name="doublevv.lights.fragments.IdleFragment"
-                tools:layout="@layout/fragment_color"
                 android:elevation="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
+
+        </LinearLayout>
 
     </TableLayout>
 

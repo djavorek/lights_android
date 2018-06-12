@@ -1,8 +1,11 @@
 package doublevv.lights.fragments;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -16,11 +19,11 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import doublevv.lights.R;
-import doublevv.lights.services.udp.DeviceService;
-import doublevv.lights.services.udp.DeviceService.Status;
+import doublevv.lights.services.led.LedDeviceState;
+import doublevv.lights.viewmodels.LedDeviceModel;
 
-public class StatusFragment extends Fragment implements DeviceService.LedInfoView {
-    private DeviceService deviceService = DeviceService.getInstance();
+public class StatusFragment extends Fragment {
+    private LedDeviceModel ledModel;
     private StatusChangeListener statusChangeListener;
     private CountDownTimer initializationTimer;
     private Handler pollingHandler = new Handler();
@@ -52,6 +55,18 @@ public class StatusFragment extends Fragment implements DeviceService.LedInfoVie
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ledModel = ViewModelProviders.of(this).get(LedDeviceModel.class);
+        ledModel.getState().observe(this, new Observer<LedDeviceState>() {
+            @Override
+            public void onChanged(@Nullable LedDeviceState ledDeviceState) {
+                updateUI(ledDeviceState);
+            }
+        });
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_status, container, false);
         ButterKnife.bind(this, view);
@@ -78,57 +93,58 @@ public class StatusFragment extends Fragment implements DeviceService.LedInfoVie
     }
 
     public void initializeStatus() {
+        ledModel.refreshState();
         startInitializationTimer();
-        deviceService.refreshDeviceStatus(this);
     }
 
     private Runnable refreshStatus = new Runnable() {
         @Override
         public void run() {
-            deviceService.refreshDeviceStatus(StatusFragment.this);
+            ledModel.refreshState();
             pollingHandler.postDelayed(this, 5000);
         }
     };
 
-    //When refreshDeviceStatus finished
-    @Override
-    public void refreshLedFeedbackInfo() {
-        Status currentStatus = deviceService.getStatus();
 
-        switch (currentStatus) {
-            case UNAVAILABLE: {
-                task.setText("");
-                statusChangeListener.onUnavailable();
-                status.setText(getResources().getString(R.string.unavailable));
-                break;
-            }
-            case OFF: {
-                task.setText(getResources().getString(R.string.off));
-                statusChangeListener.onOff();
-                break;
-            }
-            case COLOR: {
-                task.setText(getResources().getString(R.string.color));
-                statusChangeListener.onColor();
-                setTaskColor(deviceService.getColor());
-                break;
-            }
-            case FADE: {
-                task.setText(getResources().getString(R.string.fade));
-                statusChangeListener.onFade();
-                break;
-            }
-        }
+    public void updateUI(LedDeviceState state) {
+        if(state.getStatus() != null) {
+            LedDeviceState.Status currentStatus = state.getStatus();
 
-        if(currentStatus != Status.UNAVAILABLE)
-        {
-            status.setText(getResources().getString(R.string.available));
-            initializationBar.setVisibility(View.INVISIBLE);
-        }
+            switch (currentStatus) {
+                case UNAVAILABLE: {
+                    task.setText("");
+                    statusChangeListener.onUnavailable();
+                    status.setText(getResources().getString(R.string.unavailable));
+                    break;
+                }
+                case OFF: {
+                    task.setText(getResources().getString(R.string.off));
+                    statusChangeListener.onOff();
+                    break;
+                }
+                case COLOR: {
+                    task.setText(getResources().getString(R.string.color));
+                    statusChangeListener.onColor();
+                    setTaskColor(state.getColor());
+                    break;
+                }
+                case FADE: {
+                    task.setText(getResources().getString(R.string.fade));
+                    statusChangeListener.onFade();
+                    break;
+                }
+            }
 
-        if(currentStatus != Status.COLOR)
-        {
-            resetTaskColor();
+            if(currentStatus != LedDeviceState.Status.UNAVAILABLE)
+            {
+                status.setText(getResources().getString(R.string.available));
+                initializationBar.setVisibility(View.INVISIBLE);
+            }
+
+            if(currentStatus != LedDeviceState.Status.COLOR)
+            {
+                resetTaskColor();
+            }
         }
     }
 
@@ -159,10 +175,11 @@ public class StatusFragment extends Fragment implements DeviceService.LedInfoVie
 
             @Override
             public void onFinish() {
-                if(deviceService.getStatus() == Status.UNAVAILABLE)
-                {
+                initializationTimer.cancel();
+
+                if(ledModel.getState().getValue().getStatus() == null || ledModel.getState().getValue().getStatus() == LedDeviceState.Status.UNAVAILABLE) {
                     this.start();
-                    deviceService.refreshDeviceStatus(StatusFragment.this);
+                    initializeStatus();
                 }
                 else {
                     pollingHandler.postDelayed(refreshStatus, 4000);

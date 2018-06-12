@@ -1,8 +1,8 @@
 package doublevv.lights.fragments;
 
 public enum FunctionFragment {
-    IDLE("idle"),
     UNAVAILABLE("unavailable"),
+    IDLE("idle"),
     COLOR("color"),
     FADE("fade"),
     SLEEP("sleep");

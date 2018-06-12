@@ -4,9 +4,9 @@ public class ResponseMessage {
     private String ip;
     private String status;
 
-    public ResponseMessage(String ip, String status) {
+    public ResponseMessage(String ip, String response) {
         this.ip = ip;
-        this.status = status;
+        this.status = response;
     }
 
     public String getIp() {
@@ -17,11 +17,11 @@ public class ResponseMessage {
         this.ip = ip;
     }
 
-    public String getStatus() {
+    public String getResponse() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setResponse(String status) {
         this.status = status;
     }
 }

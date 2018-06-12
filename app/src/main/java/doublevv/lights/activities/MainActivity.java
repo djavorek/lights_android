@@ -1,10 +1,11 @@
 package doublevv.lights.activities;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.arch.lifecycle.ViewModelProviders;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -13,16 +14,16 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import doublevv.lights.R;
-import doublevv.lights.services.udp.DeviceService;
 import doublevv.lights.fragments.ColorFragment;
 import doublevv.lights.fragments.FunctionFragment;
 import doublevv.lights.fragments.IdleFragment;
 import doublevv.lights.fragments.StatusFragment;
 import doublevv.lights.fragments.UnavailableFragment;
+import doublevv.lights.viewmodels.LedDeviceModel;
 
 
 public class MainActivity extends AppCompatActivity implements ColorFragment.OnColorChangeListener, StatusFragment.StatusChangeListener {
-    DeviceService deviceService = DeviceService.getInstance();
+    LedDeviceModel ledModel;
     FunctionFragment function;
 
     StatusFragment statusFragment;
@@ -49,6 +50,9 @@ public class MainActivity extends AppCompatActivity implements ColorFragment.OnC
         ButterKnife.bind(this);
 
         statusFragment = (StatusFragment)getSupportFragmentManager().findFragmentById(R.id.statusFragment);
+        replaceFunctionFragment(FunctionFragment.IDLE);
+
+        ledModel = ViewModelProviders.of(this).get(LedDeviceModel.class);
     }
 
     @Override
@@ -73,8 +77,8 @@ public class MainActivity extends AppCompatActivity implements ColorFragment.OnC
             }
         }
 
-        replaceFunctionFragment(function);
-        deviceService.sendCommand(command, statusFragment);
+        ledModel.sendCommandAndRefreshState(command);
+        replaceFunctionFragment(function);;
     }
 
     @OnClick({R.id.colorButton, R.id.fadeButton, R.id.sleepButton})
@@ -105,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements ColorFragment.OnC
         int blue = Color.blue(color);
         String colorString = String.valueOf(red) + ":" + String.valueOf(green) + ":" + String.valueOf(blue);
 
-        deviceService.sendCommand(colorString, statusFragment);
+        ledModel.sendCommandAndRefreshState(colorString);
     }
 
     @Override
