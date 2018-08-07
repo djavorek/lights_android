@@ -12,7 +12,7 @@ import java.net.UnknownHostException;
 
 public class UdpClientThread extends Thread{
 
-    public static boolean isReady = true;
+    private static boolean isReady = true;
 
     private String destinationIP;
     private String message;
@@ -35,48 +35,50 @@ public class UdpClientThread extends Thread{
 
     @Override
     public void run() {
-        isReady = false;
-
-        DatagramSocket socket = null;
-        byte[] buffer = new byte[256];
-        String responseStatus = null;
-
-        try {
-            socket = new DatagramSocket(responsePort);
-            InetAddress address = InetAddress.getByName(destinationIP);
-
-            DatagramPacket packet =
-                    new DatagramPacket(message.getBytes(), message.getBytes().length, address, destinationPort);
-            socket.send(packet);
+        if(isReady)
+        {
+            isReady = false;
+            DatagramSocket socket = null;
+            byte[] buffer = new byte[256];
+            String responseStatus = null;
 
             try {
-                packet = new DatagramPacket(buffer, buffer.length);
-                socket.setSoTimeout(2000);
-                socket.receive(packet);
-                responseStatus = new String(packet.getData(), 0, packet.getLength());
+                socket = new DatagramSocket(responsePort);
+                InetAddress address = InetAddress.getByName(destinationIP);
 
-                ResponseMessage responseMessage = new ResponseMessage(packet.getAddress().getHostAddress(), responseStatus);
-                handler.sendMessage(
-                        Message.obtain(handler, handler.UPDATE, responseMessage));
+                DatagramPacket packet =
+                        new DatagramPacket(message.getBytes(), message.getBytes().length, address, destinationPort);
+                socket.send(packet);
+
+                try {
+                    packet = new DatagramPacket(buffer, buffer.length);
+                    socket.setSoTimeout(2000);
+                    socket.receive(packet);
+                    responseStatus = new String(packet.getData(), 0, packet.getLength());
+
+                    ResponseMessage responseMessage = new ResponseMessage(packet.getAddress().getHostAddress(), responseStatus);
+                    handler.sendMessage(
+                            Message.obtain(handler, handler.UPDATE, responseMessage));
+                }
+                catch (SocketTimeoutException e) {
+                    handler.sendEmptyMessage(handler.NO_RESPONSE);
+                }
+                catch (NullPointerException e) {
+                    System.err.println("Response received, but was null.. (no way)");
+                }
+            } catch (SocketException e) {
+                e.printStackTrace();
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if(socket != null){
+                    socket.close();
+                }
+                handler.sendEmptyMessage(handler.DONE);
+                isReady = true;
             }
-            catch (SocketTimeoutException e) {
-                handler.sendEmptyMessage(handler.NO_RESPONSE);
-            }
-            catch (NullPointerException e) {
-                System.err.println("Response received, but was null.. (no way)");
-            }
-        } catch (SocketException e) {
-            e.printStackTrace();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if(socket != null){
-                socket.close();
-            }
-            handler.sendEmptyMessage(handler.DONE);
-            isReady = true;
         }
     }
 }

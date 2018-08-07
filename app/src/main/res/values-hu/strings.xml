@@ -12,4 +12,6 @@
     <string name="chooseColor">Szín választás</string>
     <string name="fadeSettings">Áttűnés Beállítása</string>
     <string name="sleepTimer">Időzített Altatás</string>
+    <string name="speed">Sebesség</string>
+    <string name="intensitiy">Erősség</string>
 </resources>

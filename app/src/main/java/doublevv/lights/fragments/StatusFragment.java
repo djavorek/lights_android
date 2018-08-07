@@ -27,6 +27,7 @@ public class StatusFragment extends Fragment {
     private StatusChangeListener statusChangeListener;
     private CountDownTimer initializationTimer;
     private Handler pollingHandler = new Handler();
+    private LedDeviceState.Status persistedStatus;
 
     @BindView(R.id.statusProgressbar)
     ProgressBar initializationBar;
@@ -57,7 +58,7 @@ public class StatusFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ledModel = ViewModelProviders.of(this).get(LedDeviceModel.class);
+        ledModel = ViewModelProviders.of(getActivity()).get(LedDeviceModel.class);
         ledModel.getState().observe(this, new Observer<LedDeviceState>() {
             @Override
             public void onChanged(@Nullable LedDeviceState ledDeviceState) {
@@ -107,8 +108,9 @@ public class StatusFragment extends Fragment {
 
 
     public void updateUI(LedDeviceState state) {
-        if(state.getStatus() != null) {
-            LedDeviceState.Status currentStatus = state.getStatus();
+        LedDeviceState.Status currentStatus = state.getStatus();
+
+        if(currentStatus != null && (currentStatus != LedDeviceState.Status.UNAVAILABLE || !currentStatus.equals(persistedStatus))) {
 
             switch (currentStatus) {
                 case UNAVAILABLE: {
@@ -119,32 +121,32 @@ public class StatusFragment extends Fragment {
                 }
                 case OFF: {
                     task.setText(getResources().getString(R.string.off));
-                    statusChangeListener.onOff();
                     break;
                 }
                 case COLOR: {
                     task.setText(getResources().getString(R.string.color));
-                    statusChangeListener.onColor();
                     setTaskColor(state.getColor());
                     break;
                 }
                 case FADE: {
                     task.setText(getResources().getString(R.string.fade));
-                    statusChangeListener.onFade();
                     break;
                 }
             }
 
-            if(currentStatus != LedDeviceState.Status.UNAVAILABLE)
+            if(currentStatus != LedDeviceState.Status.COLOR)
+            {
+                hideTaskColor();
+            }
+
+            if (persistedStatus == LedDeviceState.Status.UNAVAILABLE && currentStatus != LedDeviceState.Status.UNAVAILABLE)
             {
                 status.setText(getResources().getString(R.string.available));
                 initializationBar.setVisibility(View.INVISIBLE);
+                statusChangeListener.onAvailable();
             }
 
-            if(currentStatus != LedDeviceState.Status.COLOR)
-            {
-                resetTaskColor();
-            }
+            persistedStatus = currentStatus;
         }
     }
 
@@ -160,7 +162,7 @@ public class StatusFragment extends Fragment {
 
     }
 
-    private void resetTaskColor() {
+    private void hideTaskColor() {
         taskColor.setVisibility(View.GONE);
     }
 
@@ -191,8 +193,6 @@ public class StatusFragment extends Fragment {
 
     public interface StatusChangeListener {
         void onUnavailable();
-        void onOff();
-        void onColor();
-        void onFade();
+        void onAvailable();
     }
 }

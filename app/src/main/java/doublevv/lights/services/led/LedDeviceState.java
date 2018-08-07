@@ -17,7 +17,7 @@ public class LedDeviceState {
             setStatus(Status.FADE);
             setFadeSpeed(Integer.parseInt(statusString.substring(statusString.indexOf(":") + 1)));
         }
-        else if(statusString.matches("(.*:.*:.*)")) {
+        else if(statusString.matches("(.*:.*:.*:.*)")) {
             setStatus(Status.COLOR);
             setColor(statusString);
         }

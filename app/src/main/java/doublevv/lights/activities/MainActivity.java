@@ -1,9 +1,11 @@
 package doublevv.lights.activities;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -15,17 +17,18 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import doublevv.lights.R;
 import doublevv.lights.fragments.ColorFragment;
+import doublevv.lights.fragments.FadeFragment;
 import doublevv.lights.fragments.FunctionFragment;
 import doublevv.lights.fragments.IdleFragment;
 import doublevv.lights.fragments.StatusFragment;
 import doublevv.lights.fragments.UnavailableFragment;
+import doublevv.lights.services.led.LedDeviceState;
 import doublevv.lights.viewmodels.LedDeviceModel;
 
 
-public class MainActivity extends AppCompatActivity implements ColorFragment.OnColorChangeListener, StatusFragment.StatusChangeListener {
+public class MainActivity extends AppCompatActivity implements StatusFragment.StatusChangeListener {
     LedDeviceModel ledModel;
     FunctionFragment function;
-
     StatusFragment statusFragment;
 
     @BindView(R.id.offButton)
@@ -53,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements ColorFragment.OnC
         replaceFunctionFragment(FunctionFragment.IDLE);
 
         ledModel = ViewModelProviders.of(this).get(LedDeviceModel.class);
+
     }
 
     @Override
@@ -66,19 +70,19 @@ public class MainActivity extends AppCompatActivity implements ColorFragment.OnC
 
         switch(button.getId()) {
             case R.id.offButton: {
-                command = "0:0:0";
+                command = "0:0:0:255";
                 function = FunctionFragment.IDLE;
                 break;
             }
             case R.id.onButton: {
-                command = "255:255:255";
+                command = "255:255:255:255";
                 function = FunctionFragment.COLOR;
                 break;
             }
         }
 
         ledModel.sendCommandAndRefreshState(command);
-        replaceFunctionFragment(function);;
+        replaceFunctionFragment(function);
     }
 
     @OnClick({R.id.colorButton, R.id.fadeButton, R.id.sleepButton})
@@ -101,35 +105,15 @@ public class MainActivity extends AppCompatActivity implements ColorFragment.OnC
         replaceFunctionFragment(function);
     }
 
-
-    @Override
-    public void onColorChange(@ColorInt int color) {
-        int red = Color.red(color);
-        int green = Color.green(color);
-        int blue = Color.blue(color);
-        String colorString = String.valueOf(red) + ":" + String.valueOf(green) + ":" + String.valueOf(blue);
-
-        ledModel.sendCommandAndRefreshState(colorString);
-    }
-
     @Override
     public void onUnavailable() {
-
+        replaceFunctionFragment(FunctionFragment.UNAVAILABLE);
     }
 
     @Override
-    public void onOff() {
-
-    }
-
-    @Override
-    public void onColor() {
-
-    }
-
-    @Override
-    public void onFade() {
-
+    public void onAvailable()
+    {
+        replaceFunctionFragment(FunctionFragment.IDLE);
     }
 
     public void replaceFunctionFragment(FunctionFragment functionFragment){
@@ -153,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements ColorFragment.OnC
                     break;
                 }
                 case FADE: {
-                    //TODO
+                    requestedFragment = FadeFragment.newInstance();
                     break;
                 }
                 case SLEEP: {

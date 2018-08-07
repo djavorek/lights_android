@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,11 +12,36 @@
         android:orientation="vertical"
         android:padding="10dp">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+
+        </LinearLayout>
+
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/unavailableText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TODO: Connection Tips" />
+            android:textStyle="bold"
+            android:text="@string/unavailable_long" />
 
+        <ImageView
+            android:id="@+id/imageView"
+            android:scaleX="1.5"
+            android:scaleY="1.5"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="15dp"
+            android:src="@drawable/sad" />
+
+        <TextView
+            android:id="@+id/thereAreConnectionTipsText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/thereAreConnectionTips" />
     </LinearLayout>
+
 </FrameLayout>

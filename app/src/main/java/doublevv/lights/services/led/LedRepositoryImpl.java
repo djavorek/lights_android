@@ -2,10 +2,13 @@ package doublevv.lights.services.led;
 
 import android.arch.lifecycle.MutableLiveData;
 
+import javax.inject.Singleton;
+
 import doublevv.lights.services.udp.ResponseMessage;
 import doublevv.lights.services.udp.UdpClientHandler;
 import doublevv.lights.services.udp.UdpClientThread;
 
+@Singleton
 public class LedRepositoryImpl implements LedRepository {
     private static final LedRepositoryImpl instance = new LedRepositoryImpl();
 
@@ -36,9 +39,7 @@ public class LedRepositoryImpl implements LedRepository {
         LedDeviceState state = new LedDeviceState();
 
         if(message != null) {
-            if(UdpClientThread.isReady) {
-                new UdpClientThread(this.getUdpAddress(), message, new UdpClientHandler(getOperator(data, state))).start();
-            }
+            new UdpClientThread(this.getUdpAddress(), message, new UdpClientHandler(getOperator(data, state))).start();
         }
         else {
             getState(data);
@@ -48,7 +49,8 @@ public class LedRepositoryImpl implements LedRepository {
     }
 
     private void refreshStatus(final MutableLiveData<LedDeviceState> data, LedDeviceState state) {
-        new UdpClientThread(getUdpAddress(), "Status", new UdpClientHandler(getOperator(data, state))).start();
+        //TODO: Wire device name here
+        new UdpClientThread(getUdpAddress(), "Status:alpha", new UdpClientHandler(getOperator(data, state))).start();
     }
 
     private UdpClientHandler.UdpOperator getOperator(final MutableLiveData<LedDeviceState> responseData, final LedDeviceState state) {

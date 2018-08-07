@@ -15,7 +15,7 @@
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Idle-ing is so hard" />
+        android:text="TODO: Design, short description for functions" />
 
     </LinearLayout>
 </FrameLayout>
