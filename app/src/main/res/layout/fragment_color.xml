@@ -10,11 +10,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="10dp">
+        android:padding="5dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
             android:orientation="horizontal">
 
             <LinearLayout
@@ -85,9 +86,9 @@
 
             <ImageView
                 android:id="@+id/colorView"
-                android:layout_marginBottom="15dp"
+                android:layout_marginBottom="5dp"
                 android:layout_width="250dp"
-                android:layout_height="320dp"
+                android:layout_height="295dp"
                 android:src="@drawable/colors" />
 
             <LinearLayout
@@ -163,14 +164,13 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:fontFamily="sans-serif"
-            android:text="@string/intensitiy"
+            android:text="@string/intensity"
             android:textColor="@color/colorAccent"/>
-
         <SeekBar
             android:id="@+id/intensity"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:max="256"
+            android:layout_height="25dp"
+            android:max="255"
             android:min="1"
             android:progress="255"/>
 

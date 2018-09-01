@@ -65,7 +65,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:theme="@style/button"
-                android:text="@string/sleepTimer"/>
+                android:text="@string/sleepTimer"
+                android:clickable="false"/>
         </TableRow>
 
         <LinearLayout

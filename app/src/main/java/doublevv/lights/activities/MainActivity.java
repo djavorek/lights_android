@@ -12,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -20,6 +22,7 @@ import doublevv.lights.fragments.ColorFragment;
 import doublevv.lights.fragments.FadeFragment;
 import doublevv.lights.fragments.FunctionFragment;
 import doublevv.lights.fragments.IdleFragment;
+import doublevv.lights.fragments.SleepFragment;
 import doublevv.lights.fragments.StatusFragment;
 import doublevv.lights.fragments.UnavailableFragment;
 import doublevv.lights.services.led.LedDeviceState;
@@ -108,12 +111,14 @@ public class MainActivity extends AppCompatActivity implements StatusFragment.St
     @Override
     public void onUnavailable() {
         replaceFunctionFragment(FunctionFragment.UNAVAILABLE);
+        enableControlButtons(false);
     }
 
     @Override
     public void onAvailable()
     {
         replaceFunctionFragment(FunctionFragment.IDLE);
+        enableControlButtons(true);
     }
 
     public void replaceFunctionFragment(FunctionFragment functionFragment){
@@ -141,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements StatusFragment.St
                     break;
                 }
                 case SLEEP: {
-                    //TODO
+                    requestedFragment = SleepFragment.newInstance();
                     break;
                 }
             }
@@ -154,5 +159,28 @@ public class MainActivity extends AppCompatActivity implements StatusFragment.St
                     .replace(R.id.functionFragment, requestedFragment, functionFragment.getTag())
                     .commit();
         }
+    }
+
+    private void enableButton(boolean enabled, Button button)
+    {
+        button.setEnabled(enabled);
+
+        if(!enabled)
+        {
+            button.setVisibility(View.INVISIBLE);
+        }
+        else
+        {
+            button.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void enableControlButtons(boolean enabled)
+    {
+        enableButton(enabled, offButton);
+        enableButton(enabled, onButton);
+        enableButton(enabled, colorButton);
+        enableButton(enabled, fadeButton);
+        enableButton(enabled, sleepButton);
     }
 }

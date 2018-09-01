@@ -9,10 +9,33 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="6dp">
+
+        <RadioGroup
+            android:id="@+id/modeSelector"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="30dp">
+
+            <RadioButton
+                android:id="@+id/modeTransition"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/transition"
+                android:theme="@style/button"/>
+            <RadioButton
+                android:id="@+id/modeFade"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fade"
+                android:theme="@style/button"/>
+        </RadioGroup>
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/speedText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
@@ -24,10 +47,31 @@
         <SeekBar
             android:id="@+id/speed"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:max="100"
+            android:layout_height="50dp"
+            android:max="255"
             android:min="1"
-            android:progress="50"/>
+            android:progress="126"/>
+
+        <TextView
+            android:id="@+id/intensityText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:text="@string/intensity"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/colorAccent"
+            android:textSize="16sp" />
+
+        <SeekBar
+            android:id="@+id/intensity"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:max="255"
+            android:min="1"
+            android:progress="255"/>
+
     </LinearLayout>
+
+
 
 </FrameLayout>

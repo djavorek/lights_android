@@ -41,8 +41,6 @@ public class StatusFragment extends Fragment {
     @BindView(R.id.task_color)
     View taskColor;
 
-    public StatusFragment() {
-    }
 
     @Override
     public void onAttach(Context context) {
@@ -129,8 +127,11 @@ public class StatusFragment extends Fragment {
                     break;
                 }
                 case FADE: {
-                    task.setText(getResources().getString(R.string.fade));
+                    task.setText(getResources().getString(R.string.fading));
                     break;
+                }
+                case SLEEP: {
+                    task.setText(getResources().getString(R.string.sleep));
                 }
             }
 
@@ -139,10 +140,14 @@ public class StatusFragment extends Fragment {
                 hideTaskColor();
             }
 
-            if (persistedStatus == LedDeviceState.Status.UNAVAILABLE && currentStatus != LedDeviceState.Status.UNAVAILABLE)
+            if(currentStatus != LedDeviceState.Status.UNAVAILABLE)
             {
                 status.setText(getResources().getString(R.string.available));
                 initializationBar.setVisibility(View.INVISIBLE);
+            }
+
+            if (persistedStatus == LedDeviceState.Status.UNAVAILABLE && currentStatus != LedDeviceState.Status.UNAVAILABLE)
+            {
                 statusChangeListener.onAvailable();
             }
 

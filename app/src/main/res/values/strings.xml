@@ -6,13 +6,15 @@
     <string name="unavailable">Unavailable</string>
     <string name="off">Turned Off</string>
     <string name="color">Turned On</string>
-    <string name="fade">Fading</string>
+    <string name="fading">Fading</string>
     <string name="turnOff">Turn Off</string>
     <string name="on">Turn On</string>
     <string name="chooseColor">Choose Color</string>
     <string name="fadeSettings">Fade Settings</string>
     <string name="sleepTimer">Sleep Timer</string>
     <string name="speed">Speed</string>
-    <string name="intensitiy">Intensity</string>
-
+    <string name="intensity">Intensity</string>
+    <string name="transition">Transition</string>
+    <string name="fade">Fade</string>
+    <string name="sleep">Sleep</string>
 </resources>

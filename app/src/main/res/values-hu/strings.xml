@@ -6,12 +6,15 @@
     <string name="unavailable">Nem Elérhető</string>
     <string name="off">Kikapcsolva</string>
     <string name="color">Világít</string>
-    <string name="fade">Áttűnés</string>
+    <string name="fading">Áttűnés</string>
     <string name="turnOff">Kikapcsolás</string>
     <string name="on">Bekapcsolás</string>
     <string name="chooseColor">Szín választás</string>
     <string name="fadeSettings">Áttűnés Beállítása</string>
     <string name="sleepTimer">Időzített Altatás</string>
     <string name="speed">Sebesség</string>
-    <string name="intensitiy">Erősség</string>
+    <string name="intensity">Erősség</string>
+    <string name="transition">Átmenet</string>
+    <string name="fade">Halványulás</string>
+    <string name="sleep">Alvás</string>
 </resources>
