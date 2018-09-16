@@ -17,4 +17,5 @@
     <string name="transition">Transition</string>
     <string name="fade">Fade</string>
     <string name="sleep">Sleep</string>
+    <string name="savedColor_pref" translatable="false">colorpref</string>
 </resources>

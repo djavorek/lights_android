@@ -5,4 +5,5 @@
     <color name="colorPrimaryDarkShadow">#005148</color>
     <color name="colorAccent">#ffc107</color>
     <color name="textColor">#000000</color>
+    <color name="colorSlot">#999999</color>
 </resources>
