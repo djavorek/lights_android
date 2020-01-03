@@ -1,8 +1,56 @@
+### All-rounder Gitignore for my projects ###
+
+## Maven ##
+target/
+
+## IntelliJ / Webstorm ##
+.idea
+**/*.pyc
+**/*.iml
+*.iws
 *.iml
-.gradle
+*.ipr
+/out/
+.project
+
+## Android Studio ##
+
+*.apk
+*.aar
+*.ap_
+*.aab
+*.dex
+*.class
+bin/
+gen/
+out/
+.gradle/
+build/
+
+## Linux ##
+.directory
+
+## Eclipse ##
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
 local.properties
-/.idea
-.DS_Store
-/build
-/captures
-.externalNativeBuild
+.settings/
+.loadpath
+.recommenders
+.factorypath
+.buildpath
+
+## NPM / JS / NODE ##
+package-lock.json
+/node_modules/
+/dist/
+/logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+**/*.iml
